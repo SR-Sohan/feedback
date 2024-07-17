@@ -1,4 +1,61 @@
-<?php require "components/header.php" ?>
+<?php 
+require "components/header.php" ;
+
+$err = false;
+$user = [];
+
+
+
+if (isset($_POST['email'])) {
+
+    $mail = strip_tags($_POST["email"]);
+    $pass = strip_tags($_POST["password"]);
+
+ 
+    $msg = "";
+    // Check input 
+    if ($mail == "") {
+        $err = true;
+        array_push($errMsg, "Email Is empty!");
+    } elseif (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+        $err = true;
+        array_push($errMsg, "Please enter correct Email!");
+    }
+
+    if (strlen($pass) < "6") {
+        $err = true;
+        array_push($errMsg, "Please enter 6 or more word Password!");
+    }
+    // Check File
+    if (!$err) {
+        $file = fopen('users/users.txt', 'r');
+
+        while (!feof($file)) {
+
+            $line = fgets($file);
+
+            if ($line) {
+                list($name, $email, $password) = explode(' | ', $line);
+                if (trim($email) == $mail && password_verify($pass, $password)) {
+                    echo $email . ":" . $password;
+                    // array_push($user,$fname,$lname,$email,$address);
+                    $_SESSION["login"] = "true";
+                    $_SESSION['user'] = array();
+                    array_push($_SESSION['user'], $name, $email);
+                    header('Location:dashboard.php');
+                    break;
+                }else{
+                    $err = true;
+                }
+            }
+        }
+        fclose($file);
+    }
+}
+
+
+
+?>
 
 <main class="">
     <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
@@ -12,7 +69,16 @@
                     </div>
 
                     <div class="mt-10 mx-auto w-full max-w-xl">
-                        <form class="space-y-6" action="#" method="POST">
+                        <form class="space-y-6" action="" method="POST">
+                        <ul class="my-4  mx-auto">
+                                <?php
+                                if ($err) {
+                                    
+                                        echo "<li class='text-red-500'>Email and Password Didn't match!!</li>";
+                                    
+                                }
+                                ?>
+                            </ul>
                             <div>
                                 <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
                                 <div class="mt-2">

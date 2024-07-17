@@ -1,4 +1,62 @@
-<?php require "components/header.php" ?>
+<?php
+require "components/header.php";
+
+$err = false;
+$errMsg = [];
+
+
+
+if (isset($_POST['email'])) {
+
+    $name = strip_tags($_POST["name"]);
+    $email = strip_tags($_POST["email"]);
+    $pass = strip_tags($_POST["password"]);
+    $repass = strip_tags($_POST["confirm_password"]);
+
+    $file = file_get_contents("users/users.txt");
+
+
+    if (preg_match_all("/$email/", $file, $match)) {
+        $err = true;
+        array_push($errMsg, "This email already use!");
+    } else {
+        if ($name == "") {
+            $err = true;
+            array_push($errMsg, " Name Is empty!");
+        }
+        if ($email == "") {
+            $err = true;
+            array_push($errMsg, "Last Name Is empty!");
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $err = true;
+            array_push($errMsg, "Please enter correct Email!");
+        }
+
+        if (strlen($pass) < "6") {
+            $err = true;
+            array_push($errMsg, "Please enter 6 or more word Password!");
+        }
+
+        if ($pass != $repass) {
+            $err = true;
+            array_push($errMsg, "Password and Re-type Password didn't Match!");
+        }
+
+
+        if (!$err) {
+
+            $text = $name." | ".$email ." | " .password_hash($pass, PASSWORD_DEFAULT)."\n";
+
+            $fh = fopen("users/users.txt", "a");
+
+            fwrite($fh, $text);
+            fclose($fh);
+            header("location: login.php");
+        }
+    }
+}
+
+?>
 
 <main class="">
     <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
@@ -12,7 +70,16 @@
                     </div>
 
                     <div class="mt-10 mx-auto w-full max-w-xl">
-                        <form class="space-y-6" action="#" method="POST">
+                        <form class="space-y-6" action="" method="POST">
+                            <ul class="my-4  mx-auto">
+                                <?php
+                                if ($err) {
+                                    foreach ($errMsg as $key => $value) {
+                                        echo "<li class='text-red-500'>$value</li>";
+                                    }
+                                }
+                                ?>
+                            </ul>
                             <div>
                                 <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
                                 <div class="mt-2">
