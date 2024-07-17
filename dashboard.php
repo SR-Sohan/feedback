@@ -1,4 +1,7 @@
-<?php require "components/header.php" ?>
+<?php 
+require "components/header.php" ;
+require "auth/auth.php";
+?>
 
 <main class="">
     <div class="relative flex min-h-screen overflow-hidden bg-gray-50 py-6 sm:py-12">
