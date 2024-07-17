@@ -1,4 +1,20 @@
-<?php require "components/header.php" ?>
+<?php 
+require "components/header.php";
+require "auth/auth.php";
+if(isset($_POST['feedback'])){
+
+    $feedback = $_POST['feedback'];
+
+    $filename = 'posts/'.rand(1,999999999999).'.txt';
+
+    if(file_put_contents($filename, $feedback)){
+        echo "<script> window.location.href = 'feedbackSuccess.php'</script>";
+    }else{
+        echo "Something is wrong";
+    }
+}
+
+?>
 
 <main class="">
     <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
@@ -13,7 +29,7 @@
                     </div>
 
                     <div class="mt-10 mx-auto w-full max-w-xl">
-                        <form class="space-y-6" action="#" method="POST">
+                        <form class="space-y-6" action="" method="POST">
                             <div>
                                 <label for="feedback" class="block text-sm font-medium leading-6 text-gray-900">Don't hesitate, just do it!</label>
                                 <div class="mt-2">
